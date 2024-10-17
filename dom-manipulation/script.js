@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function showRandomQuote() {
         const randomIndex = Math.floor(Math.random() * quotes.length);
         const quote = quotes[randomIndex];
-        document.getElementById('quoteDisplay').textContent = `"${quote.text}" - Category: ${quote.category}`;
+        document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - <strong>Category:</strong> ${quote.category}`;
     }
 
     // Show a random quote on button click
@@ -38,3 +38,4 @@ document.addEventListener('DOMContentLoaded', function () {
     // Attach the addQuote function to the global window object to make it accessible
     window.addQuote = addQuote;
 });
+
