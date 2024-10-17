@@ -13,8 +13,34 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - <strong>Category:</strong> ${quote.category}`;
     }
 
-    // Show a random quote on button click
-    document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+    // Create the form for adding quotes
+    function createAddQuoteForm() {
+        const formContainer = document.createElement('div');
+
+        // Create input fields
+        const newQuoteText = document.createElement('input');
+        newQuoteText.id = 'newQuoteText';
+        newQuoteText.type = 'text';
+        newQuoteText.placeholder = 'Enter a new quote';
+
+        const newQuoteCategory = document.createElement('input');
+        newQuoteCategory.id = 'newQuoteCategory';
+        newQuoteCategory.type = 'text';
+        newQuoteCategory.placeholder = 'Enter quote category';
+
+        // Create add quote button
+        const addButton = document.createElement('button');
+        addButton.textContent = 'Add Quote';
+        addButton.onclick = addQuote;
+
+        // Append elements to the form container
+        formContainer.appendChild(newQuoteText);
+        formContainer.appendChild(newQuoteCategory);
+        formContainer.appendChild(addButton);
+
+        // Append form container to the body (or any desired parent element)
+        document.body.appendChild(formContainer);
+    }
 
     // Function to add a new quote
     function addQuote() {
@@ -35,7 +61,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Attach the addQuote function to the global window object to make it accessible
-    window.addQuote = addQuote;
-});
+    // Show a random quote on button click
+    document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
+    // Call the createAddQuoteForm function to generate the form dynamically
+    createAddQuoteForm();
+});
