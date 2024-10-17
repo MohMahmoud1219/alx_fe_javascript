@@ -21,6 +21,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Function to post a new quote to the server using POST
+    async function postQuoteToServer(quote) {
+        try {
+            const response = await fetch(serverURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(quote)
+            });
+
+            const data = await response.json();
+            console.log("Quote posted successfully:", data);
+        } catch (error) {
+            console.error("Error posting to server:", error);
+            notification.textContent = "Error posting to server.";
+        }
+    }
+
     // Function to sync with the server
     async function syncWithServer() {
         const serverQuotes = await fetchQuotesFromServer();
@@ -39,9 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('quotes', JSON.stringify(quotes));
     }
 
-    // باقي الكود مثل: إضافة اقتباسات جديدة، تصدير JSON، استيراد JSON، الفلترة، عرض اقتباسات عشوائية
-
-    // Example: Add quote function
+    // Function to add a new quote and post it to the server
     function addQuote() {
         const newQuoteText = document.getElementById('newQuoteText').value;
         const newQuoteCategory = document.getElementById('newQuoteCategory').value;
@@ -50,6 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const newQuote = { text: newQuoteText, category: newQuoteCategory };
             quotes.push(newQuote);
             saveQuotes();  // Save the new quote in localStorage
+
+            // Post the new quote to the server
+            postQuoteToServer(newQuote);
 
             // Update the category dropdown if a new category is introduced
             populateCategories();
@@ -67,6 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // استدعاء المزامنة مع الخادم كل 30 ثانية
     setInterval(syncWithServer, 30000);
 
-    // باقي الكود كما هو (مثل إضافة الاقتباسات، تصدير JSON، استيراد JSON)
+    // باقي الكود كما هو (مثل تصدير JSON، استيراد JSON)
 
 });
