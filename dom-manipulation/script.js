@@ -40,17 +40,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Function to sync with the server
-    async function syncWithServer() {
+    // Function to sync quotes with the server
+    async function syncQuotes() {
         const serverQuotes = await fetchQuotesFromServer();
         const localQuoteIds = quotes.map(quote => quote.id);
-        const newQuotes = serverQuotes.filter(serverQuote => !localQuoteIds.includes(serverQuote.id));
 
+        // Check for new quotes from the server
+        const newQuotes = serverQuotes.filter(serverQuote => !localQuoteIds.includes(serverQuote.id));
         if (newQuotes.length > 0) {
             quotes.push(...newQuotes);
             saveQuotes();
             notification.textContent = "New quotes from the server were added.";
         }
+
+        // Post all local quotes to the server (or selectively if you want)
+        quotes.forEach(quote => postQuoteToServer(quote));
     }
 
     // Function to save quotes to localStorage
@@ -58,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('quotes', JSON.stringify(quotes));
     }
 
-    // Function to add a new quote and post it to the server
+    // Function to add a new quote
     function addQuote() {
         const newQuoteText = document.getElementById('newQuoteText').value;
         const newQuoteCategory = document.getElementById('newQuoteCategory').value;
@@ -85,8 +89,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // استدعاء المزامنة مع الخادم كل 30 ثانية
-    setInterval(syncWithServer, 30000);
+    setInterval(syncQuotes, 30000);
 
-    // باقي الكود كما هو (مثل تصدير JSON، استيراد JSON)
+    // باقي الكود كما هو (مثل تصدير JSON، استيراد JSON، الفلترة، عرض اقتباسات عشوائية)
 
 });
