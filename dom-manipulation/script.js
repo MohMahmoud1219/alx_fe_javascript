@@ -44,9 +44,8 @@ document.addEventListener('DOMContentLoaded', function () {
     async function syncQuotes() {
         const serverQuotes = await fetchQuotesFromServer();
         const localQuoteIds = quotes.map(quote => quote.id);
-
-        // Check for new quotes from the server
         const newQuotes = serverQuotes.filter(serverQuote => !localQuoteIds.includes(serverQuote.id));
+
         if (newQuotes.length > 0) {
             quotes.push(...newQuotes);
             saveQuotes();
@@ -54,7 +53,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Post all local quotes to the server (or selectively if you want)
-        quotes.forEach(quote => postQuoteToServer(quote));
+        for (const quote of quotes) {
+            await postQuoteToServer(quote);
+        }
+
+        // Show a success message after syncing
+        notification.textContent = "Quotes synced with server!";
     }
 
     // Function to save quotes to localStorage
