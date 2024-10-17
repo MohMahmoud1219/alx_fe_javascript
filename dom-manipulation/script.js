@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
         { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Life" }
     ];
 
+    const serverURL = 'https://jsonplaceholder.typicode.com/posts';
+    const notification = document.getElementById('notification');
+
     // Load last selected filter from localStorage
     const lastSelectedCategory = localStorage.getItem('selectedCategory') || 'all';
 
@@ -73,6 +76,27 @@ document.addEventListener('DOMContentLoaded', function () {
         showRandomQuote();
     }
 
+    // Sync with the server every 30 seconds
+    function syncWithServer() {
+        fetch(serverURL)
+            .then(response => response.json())
+            .then(serverQuotes => {
+                // Simulate conflict resolution: Server takes precedence
+                const localQuoteIds = quotes.map(quote => quote.id);
+                const newQuotes = serverQuotes.filter(serverQuote => !localQuoteIds.includes(serverQuote.id));
+                
+                if (newQuotes.length > 0) {
+                    quotes.push(...newQuotes);
+                    saveQuotes();
+                    notification.textContent = "New quotes from the server were added.";
+                }
+            })
+            .catch(error => {
+                console.error("Error syncing with server:", error);
+                notification.textContent = "Error syncing with server.";
+            });
+    }
+
     // Export quotes to JSON file
     document.getElementById('exportQuotes').addEventListener('click', function () {
         const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: 'application/json' });
@@ -107,4 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Show a random quote on button click
     document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+
+    // Periodically sync with the server every 30 seconds
+    setInterval(syncWithServer, 30000);
 });
