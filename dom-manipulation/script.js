@@ -8,32 +8,30 @@ document.addEventListener('DOMContentLoaded', function () {
     const serverURL = 'https://jsonplaceholder.typicode.com/posts';
     const notification = document.getElementById('notification');
 
-    // Function to fetch quotes from server
-    function fetchQuotesFromServer() {
-        return fetch(serverURL)
-            .then(response => response.json())
-            .then(serverQuotes => {
-                return serverQuotes;  // Return the fetched quotes
-            })
-            .catch(error => {
-                console.error("Error fetching from server:", error);
-                notification.textContent = "Error fetching from server.";
-                return [];
-            });
+    // Function to fetch quotes from server using async/await
+    async function fetchQuotesFromServer() {
+        try {
+            const response = await fetch(serverURL);
+            const serverQuotes = await response.json();
+            return serverQuotes;
+        } catch (error) {
+            console.error("Error fetching from server:", error);
+            notification.textContent = "Error fetching from server.";
+            return [];
+        }
     }
 
     // Function to sync with the server
-    function syncWithServer() {
-        fetchQuotesFromServer().then(serverQuotes => {
-            const localQuoteIds = quotes.map(quote => quote.id);
-            const newQuotes = serverQuotes.filter(serverQuote => !localQuoteIds.includes(serverQuote.id));
+    async function syncWithServer() {
+        const serverQuotes = await fetchQuotesFromServer();
+        const localQuoteIds = quotes.map(quote => quote.id);
+        const newQuotes = serverQuotes.filter(serverQuote => !localQuoteIds.includes(serverQuote.id));
 
-            if (newQuotes.length > 0) {
-                quotes.push(...newQuotes);
-                saveQuotes();
-                notification.textContent = "New quotes from the server were added.";
-            }
-        });
+        if (newQuotes.length > 0) {
+            quotes.push(...newQuotes);
+            saveQuotes();
+            notification.textContent = "New quotes from the server were added.";
+        }
     }
 
     // Function to save quotes to localStorage
